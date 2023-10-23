@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginRegisterController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SendEmailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,3 +30,4 @@ Route::controller(LoginRegisterController::class)->group(function () {
 });
 
 Route::get('/users', [UserController::class, 'index'])->name('users');
+Route::get('/send-mail', [SendEmailController::class, 'index'])->name('kirim-email');
