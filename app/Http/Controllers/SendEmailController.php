@@ -4,19 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Mail;
-use App\Mail\SendEmail;
+use App\Jobs\SendMailJob;
 
 class SendEmailController extends Controller
 {
     public function index()
     {
-        $content = [
-            'subject' => 'This is the mail subject',
-            'body' => 'This is the email body of how to send email from laravel 10 with mailtrap.'
-        ];
+        return view('kirim-email');
+    }
 
-        Mail::to('choirudin.emcha@gmail.com')->send(new SendEmail($content));
+    public function store(Request $request)
+    {
+        $data = $request->all();
 
-        return "Email berhasil dikirim.";
+        dispatch(new SendMailJob($data));
+        return redirect()->route('kirim-email')->with('success', 'Email berhasil dikirim');
     }
 }
