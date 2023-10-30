@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Jobs\SendMailJob;
 
 class LoginRegisterController extends Controller
 {
@@ -53,6 +54,11 @@ class LoginRegisterController extends Controller
         $credentials = $request->only('email', 'password');
         Auth::attempt($credentials);
         $request->session()->regenerate();
+        $data = $request->all();
+        $data['subject'] = "Pendaftaran Berhasil";
+        $data['body'] = "Hallo, pendaftaran anda di aplikasi " . env('APP_NAME') . " berhasil.";
+
+        dispatch(new SendMailJob($data));
         return redirect()->route('dashboard')
             ->withSuccess('You have successfully registered & logged in!');
     }
