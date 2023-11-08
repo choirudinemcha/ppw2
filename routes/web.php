@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginRegisterController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SendEmailController;
-
+use App\Http\Controllers\GalleryController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -33,3 +33,4 @@ Route::get('/users', [UserController::class, 'index'])->name('users');
 Route::get('/send-mail', [SendEmailController::class, 'index'])->name('kirim-email');
 Route::post('/post-email', [SendEmailController::class, 'store'])->name('post-email');
 
+Route::resource('gallery', GalleryController::class);
