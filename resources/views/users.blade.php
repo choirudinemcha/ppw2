@@ -14,8 +14,20 @@
         <td>{{ $user->name }}</td>
         <td>{{ $user->email }}</td>
         <!-- <td><img src="{{asset('storage/'.$user->photo )}}"></td> -->
-        <td><img src="{{asset('storage/'.$user->photo )}}" width="150px"></td>
-        <td><button>Edit</button><button>Delete</button></td>
+        <td>
+            @if($user->photo)
+            <img src="{{asset('storage/'.$user->photo )}}" width="100px">
+            @else
+            <img src="{{asset('noimage.jpg')}}" width="100px">
+            @endif
+        </td>
+        <td><button>Edit</button>
+            <form action="{{ route('users.destroy', $user->id) }}" method="POST">
+                @method('DELETE')
+                {{ csrf_field() }}<br />
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </td>
     </tr>
     @endforeach
 </table>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\File;
 
 
 class GalleryController extends Controller
@@ -102,7 +103,10 @@ class GalleryController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data = array(
+            'gallery' => Post::find($id)
+        );
+        return view('gallery.edit')->with($data);
     }
 
     /**
@@ -110,7 +114,55 @@ class GalleryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $this->validate($request, [
+            'title' => 'required|max:200',
+            'description' => 'nullable',
+            'picture' => 'image|required|max:1999'
+        ]);
+
+        $post = Post::find($id);
+
+        if ($request->hasFile('picture')) {
+            File::delete(public_path() . '/storage/posts_image/' . $post->picture);
+            File::delete(public_path() . '/storage/posts_image/large_' . $post->picture);
+            File::delete(public_path() . '/storage/posts_image/medium_' . $post->picture);
+            File::delete(public_path() . '/storage/posts_image/small_' . $post->picture);
+
+            $filenameWithExt = $request->file('picture')->getClientOriginalName();
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('picture')->getClientOriginalExtension();
+
+            $basename = uniqid() . time();
+            $smallFilename  = "small_{$basename}.{$extension}";
+            $mediumFilename  = "medium_{$basename}.{$extension}";
+            $largeFilename  = "large_{$basename}.{$extension}";
+
+            $filenameSimpan = "{$basename}.{$extension}";
+            $path = $request->file('picture')->storeAs('posts_image', $filenameSimpan);
+
+            $request->file('picture')->storeAs("posts_image", $smallFilename);
+            $request->file('picture')->storeAs("posts_image", $mediumFilename);
+            $request->file('picture')->storeAs("posts_image", $largeFilename);
+
+            // small
+            $smallThumbnailPath = storage_path("app/public/posts_image/{$smallFilename}");
+            $this->createThumbnail($smallThumbnailPath, 150, 93);
+            //medium
+            $mediumThumbnailPath = storage_path("app/public/posts_image/{$mediumFilename}");
+            $this->createThumbnail($mediumThumbnailPath, 300, 185);
+            //large
+            $largeThumbnailPath = storage_path("app/public/posts_image/{$largeFilename}");
+            $this->createThumbnail($largeThumbnailPath, 550, 340);
+        } else {
+            $filenameSimpan = 'noimage.png';
+        }
+
+        $post->picture = $filenameSimpan;
+        $post->title = $request->input('title');
+        $post->description = $request->input('description');
+        $post->update();
+
+        return redirect('gallery')->with('success', 'Berhasil mengubah data');
     }
 
     /**
@@ -118,6 +170,13 @@ class GalleryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $post = Post::find($id);
+        // dd(public_path() . '/storage/posts_image/' . $post->picture);
+        File::delete(public_path() . '/storage/posts_image/' . $post->picture);
+        File::delete(public_path() . '/storage/posts_image/large_' . $post->picture);
+        File::delete(public_path() . '/storage/posts_image/medium_' . $post->picture);
+        File::delete(public_path() . '/storage/posts_image/small_' . $post->picture);
+        $post->delete();
+        return redirect('gallery')->with('success', 'Berhasil hapus data');
     }
 }

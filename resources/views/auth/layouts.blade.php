@@ -14,7 +14,7 @@
 
     <nav class="navbar navbar-expand-lg bg-light">
         <div class="container">
-            <a class="navbar-brand" href="{{ URL('/') }}">Custom Login Register</a>
+            <a class="navbar-brand" href="{{ URL('/') }}">{{env('APP_NAME')}}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -27,12 +27,12 @@
                     <li class="nav-item">
                         <a class="nav-link {{ (request()->is('register')) ? 'active' : '' }}" href="{{ route('register') }}">Register</a>
                     </li>
+                    @else
                     <li class="nav-item">
                         <a class="nav-link {{ (request()->is('gallery')) ? 'active' : '' }}" href="{{ route('gallery.index') }}">Gallery</a>
                     </li>
-                    @else
                     <li class="nav-item">
-                        <a class="nav-link {{ (request()->is('users')) ? 'active' : '' }}" href="{{ route('users') }}">Management Users</a>
+                        <a class="nav-link {{ (request()->is('users')) ? 'active' : '' }}" href="{{ route('users.index') }}">Management Users</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

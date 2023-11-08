@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\LoginRegisterController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SendEmailController;
 use App\Http\Controllers\GalleryController;
+use App\Models\Post;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,7 +19,12 @@ use App\Http\Controllers\GalleryController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $data = array(
+        'id' => "posts",
+        'menu' => 'Gallery',
+        'galleries' => Post::where('picture', '!=', '')->whereNotNull('picture')->orderBy('created_at', 'desc')->paginate(30)
+    );
+    return view('welcome')->with($data);
 })->name('welcome');
 
 Route::controller(LoginRegisterController::class)->group(function () {
@@ -29,7 +36,8 @@ Route::controller(LoginRegisterController::class)->group(function () {
     Route::post('/logout', 'logout')->name('logout');
 });
 
-Route::get('/users', [UserController::class, 'index'])->name('users');
+Route::resource('users', UserController::class);
+// Route::get('/users', [UserController::class, 'index'])->name('users');
 Route::get('/send-mail', [SendEmailController::class, 'index'])->name('kirim-email');
 Route::post('/post-email', [SendEmailController::class, 'store'])->name('post-email');
 

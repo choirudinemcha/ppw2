@@ -26,4 +26,14 @@ class UserController extends Controller
 
         return view('users')->with('userss', $users);
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        $user = User::find($id);
+        $user->delete();
+        return redirect('users/index')->with('success', 'Berhasil hapus data');
+    }
 }
