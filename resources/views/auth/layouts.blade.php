@@ -65,15 +65,18 @@
         $(document).ready(function() {
             $.get('http://localhost:8000/api/gallery', function(data) {
                 var html = '<br><h3>Ini dari API</h3><br>'
-                for (let index = 0; index < data['galleries'].length; index++) {
-                    var gallery = data['galleries'][index];
-                    html += '<div class="col-sm-3"> \
+                if (data['galleries']) {
+                    for (let index = 0; index < data['galleries'].length; index++) {
+                        var gallery = data['galleries'][index];
+
+                        html += '<div class="col-sm-3"> \
                             <div class="text-center" style="padding-bottom: 5px; border: 2px;"> \
                                 <span>' + gallery.title + '</span> \
                                 <span>' + gallery.description + '</span> \
-                                <img class="example-image img-fluid mb-2" src="http://localhost:8000/storage/posts_image/' + gallery.picture + '" alt="{{$gallery->title}}" /> \
+                                <img class="example-image img-fluid mb-2" src="http://localhost:8000/storage/posts_image/' + gallery.picture + '" alt="' + gallery.picture + '" /> \
                             </div> \
                         </div>';
+                    }
                 }
                 console.log(html);
                 $('#gallery').append(html);
