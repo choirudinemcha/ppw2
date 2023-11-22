@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\File;
-
+use Illuminate\Http\Response;
 
 class GalleryController extends Controller
 {
@@ -178,5 +178,29 @@ class GalleryController extends Controller
         File::delete(public_path() . '/storage/posts_image/small_' . $post->picture);
         $post->delete();
         return redirect('gallery')->with('success', 'Berhasil hapus data');
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    /**
+     * @OA\Get(
+     *     path="/api/gallery",
+     *     tags={"gallery"},
+     *     summary="Returns a Sample API gallery response",
+     *     description="A sample gallery to test out the API",
+     *     operationId="galler",
+     *     @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     )
+     * )
+     */
+    public function api()
+    {
+        $data = array(
+            'galleries' => Post::where('picture', '!=', '')->whereNotNull('picture')->orderBy('created_at', 'desc')->get()
+        );
+        return response()->json($data);
     }
 }
